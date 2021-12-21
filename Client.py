@@ -13,3 +13,4 @@ print("\nEnter number:\n"
 
 number = input("Sending number: ")
 int(number)
+Csock.sendall(number.encode('ascii'))
