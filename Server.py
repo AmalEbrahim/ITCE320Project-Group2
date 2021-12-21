@@ -7,13 +7,13 @@ import os
 print("\n********************The Server Has Started******************** \n")
 arr_icao = input("\nEnter the airport code (IATA): ").upper()
 Ssock_p = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-Ssock_p.bind(("192.168.1.104", 52497))
+Ssock_p.bind(("192.168.1.136", 52497))
 Ssock_p.listen(3)
 
 
 def accept_connection(sock):
     client_name = sock.recv(1024).decode('ascii')
-    print("The client: {} is connected".format(client_name))
+    print("The client -- {} -- is connected".format(client_name))
 
     while True:
         option = sock.recv(1024).decode('ascii')
@@ -35,12 +35,14 @@ def accept_connection(sock):
             file.write(json.dumps(api_response))  # Saving the retrieved information in a .json file
             file.close()
 
-            toSendFile = file.read()  # Reading the content of the file as a preparation for sending
-            sock.sendall(toSendFile)
+            with open(file_path, 'rb') as file:
+                toSendFile = file.read()  # Reading the content of the file as a preparation for sending
+                sock.sendall(toSendFile)
+            print("The requested details from {} sent successfully".format(client_name))
 
 
 clients = []
 while True:
     Ssock_a, sockName = Ssock_p.accept()
-    t = threading.Thread(target=accept_connection, args=Ssock_a)
+    t = threading.Thread(target=accept_connection(Ssock_a))
     t.start()
