@@ -26,7 +26,7 @@ def accept_connection(sock):
             api_result = requests.get('http://api.aviationstack.com/v1/flights', params)
             api_response = api_result.json()
 
-            Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project'
+            Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\server'
             if not os.path.exists(Directory):
                 os.mkdir(Directory)
             file_path = Directory + '/G2.json'
