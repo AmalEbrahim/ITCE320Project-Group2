@@ -1,0 +1,9 @@
+{
+   "pagination": {
+      "limit": 100,
+      "offset": 0,
+      "count": 0,
+      "total": 0
+   },
+   "data": []
+}

@@ -1,7 +1,6 @@
 import json
 import os
 import socket
-import time
 
 print("\n********************The Client Has Started******************** \n")
 server_address = ("192.168.43.201", 52499)
@@ -10,6 +9,8 @@ Csock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 Csock.connect(server_address)
 my_name = input("Enter client name: ")
 Csock.send(my_name.encode('ascii'))
+arr_icao = input("\nEnter the airport code:").upper()
+Csock.send(arr_icao.encode('ascii'))
 
 while True:
     print("\nSelect an Option:\n"
@@ -66,34 +67,36 @@ while True:
                                                         flight['arrival']['gate']))
 
     elif int(number) == 3:
-        city_Name = str(cityCode.get())
-        city_Name = city_Name.upper()
-        Csock.sendall(city_Name.encode('ascii'))
-        print("All flights coming from {}".format(city_Name))
-        Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\client\client_{}'.format(city_Name)
+        cityName = input("Enter city code: ").upper()
+        Csock.sendall(cityName.encode('ascii'))
+        print("All flights coming from {}: ".format(cityName))
+        Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\client\client_{}\city_{}'.format(cityName, cityName)
         if not os.path.exists(Directory):
             os.mkdir(Directory)
-            file_path = Directory + '/G2.json'
+        file_path = Directory + '/G2.json'
 
-            with open(file_path, 'wb') as file:
-                recvfile = Csock.recv(1035)
-                file.write(recvfile)
+        with open(file_path, 'wb') as file:
+            recvfile = Csock.recv(1048576)
+            file.write(recvfile)
 
-                with open(file_path) as file:
-                    flight_Data = json.load(file)  # Convert the JSON data into python objects
-            for flight in flight_Data['data']:
+        with open(file_path) as file:
+            flight_Data = json.load(file)  # Convert the JSON data into python objects
+            for flight in flight_Data["data"]:
                 print("\nFlight code (IATA) : {}\nDeparture Airport : {}, Departure Time : {}, "
-                      "Estimated Arrival Time : {}, Terminal : {}, Gate : {}"
-                      .format(flight['flight']['iata'], flight['departure']['airport'],
-                              flight['departure']['actual'], flight['arrival']['estimated'],
-                              flight['arrival']['terminal'], flight['arrival']['gate']))
+                      "Estimated Arrival Time : {}, Terminal : {}, "
+                      "Gate : {}".format(flight['flight']['iata'],
+                                         flight['departure']['airport'],
+                                         flight['departure']['actual'],
+                                         flight['arrival']['estimated'],
+                                         flight['arrival']['terminal'],
+                                         flight['arrival']['gate']))
 
     elif int(number) == 4:
-        flight_Name = str(flightNumber.get())
-        Csock.sendall(flight_Name.encode('ascii'))
+        flightNum = input("Enter flight number: ")
+        Csock.sendall(flightNum.encode('ascii'))
 
-        print("DETAILS OF FLIGHT {}".format(flight_Name))
-        Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\client\client_{}'.format(name)
+        print("DETAILS OF FLIGHT {}".format(flightNum))
+        Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\client\client_{}\flight_{}'.format(my_name, flightNum)
 
         if not os.path.exists(Directory):
             os.mkdir(Directory)
