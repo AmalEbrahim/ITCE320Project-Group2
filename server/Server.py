@@ -40,6 +40,7 @@ def accept_connection(sock):
                 toSendFile = file.read()  # Reading the content of the file as a preparation for sending
                 sock.sendall(toSendFile)
             print("The requested details from {} sent successfully".format(client_name))
+
         if int(option) == 2:
             params = {
                 'access_key': '8b7b55ffde4a7166324303e189733607',
@@ -57,12 +58,35 @@ def accept_connection(sock):
             file = open(file_path, 'w')
             file.write(json.dumps(api_response, indent=3))  # Saving the retrieved information in a .json file
             file.close()
-            
+
             with open(file_path, 'rb') as file:
                 toSendFile = file.read()  # Reading the content of the file as a preparation for sending
                 sock.sendall(toSendFile)
             print("The requested details from {} sent successfully".format(client_name))
 
+        if int(option) == 3:
+            cityName = sock.recv(1025).decode('ascii')
+            params = {
+            'access_key': 'd50638145a4d0003424e4a8c610f74fe',
+            'arr_iata' : arr_icao,
+            'dep_iata' : cityName
+            }
+            api_result = requests.get('http://api.aviationstack.com/v1/flights', params)
+            api_response = api_result.json()
+
+            Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\server'
+            if not os.path.exists(Directory):
+                os.mkdir(Directory)
+            file_path = Directory + '/G2.json'
+
+            file = open(file_path, 'w')
+            file.write(json.dumps(api_response, indent=3))  # Saving the retrieved information in a .json file
+            file.close()
+
+            with open(file_path, 'rb') as file:
+                sendfile = file.read()
+                sock.sendall(sendfile)
+            print("The requested details from {} sent successfully".format(client_name))
 
 
 
