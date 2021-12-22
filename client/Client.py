@@ -4,7 +4,7 @@ import socket
 import time
 
 print("\n********************The Client Has Started******************** \n")
-server_address = ("192.168.43.159", 52499)
+server_address = ("192.168.43.201", 52499)
 
 Csock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 Csock.connect(server_address)
@@ -29,40 +29,43 @@ while True:
         file_path = Directory + '/G2.json'
 
         with open(file_path, 'wb') as file:
-            recvfile = Csock.recv(1035)
+            recvfile = Csock.recv(1048576)
             file.write(recvfile)
 
-            with open(file_path) as file:
-                flight_Data = json.load(file)  # Convert the JSON data into python objects
+        with open(file_path) as file:
+            flight_Data = json.load(file)  # Convert the JSON data into python objects
+            for flight in flight_Data["data"]:
+                print("\nFlight code (IATA) : {}\nDeparture Airport : {}, Arrival Time : {}, "
+                      "Terminal : {}, Gate : {}".format(flight['flight']['iata'],
+                                                        flight['departure']['airport'],
+                                                        flight['arrival']['actual'],
+                                                        flight['arrival']['terminal'],
+                                                        flight['arrival']['gate']))
 
-        for flight in flight_Data['data']:
-            print("\nFlight code (IATA): {}\nDeparture Airport : {}, "
-                  "Arrival Time : {}, Terminal : {}, Gate : {}"
-                  .format(flight['flight']['iata'], flight['departure']['airport'],
-                          flight['arrival']['actual'], flight['arrival']['terminal'],
-                          flight['arrival']['gate']))
-
-    elif int(number) == '2':
+    elif int(number) == 2:
         print("All delayed flights : ")
         Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\client\client_{}'.format(my_name)
         if not os.path.exists(Directory):
             os.mkdir(Directory)
-            file_path = Directory + '/G2.json'
+        file_path = Directory + '/G2.json'
 
-            with open(file_path, 'wb') as file:
-                recvfile = Csock.recv(1035)
-                file.write(recvfile)
+        with open(file_path, 'wb') as file:
+            recvfile = Csock.recv(1048576)
+            file.write(recvfile)
 
-                with open(file_path) as file:
-                    flight_Data = json.load(file)  # Convert the JSON data into python objects
-
-            for flight in flight_Data['data']:
+        with open(file_path) as file:
+            flight_Data = json.load(file)  # Convert the JSON data into python objects
+            for flight in flight_Data["data"]:
                 print("\nFlight code (IATA) : {}\nDeparture Airport : {}, "
-                      "Departure Time : {}, Estimated Arrival Time : {}, Terminal : {}, Gate : {}"
-                      .format(flight['flight']['iata'], flight['departure']['airport'],
-                              flight['departure']['actual'],flight['arrival']['estimated'],
-                              flight['arrival']['terminal'], flight['arrival']['gate']))
-    elif int(number) == '3':
+                      "Departure Time : {}, Estimated Arrival Time : {}, "
+                      "Terminal : {}, Gate : {}".format(flight['flight']['iata'],
+                                                        flight['departure']['airport'],
+                                                        flight['departure']['actual'],
+                                                        flight['arrival']['estimated'],
+                                                        flight['arrival']['terminal'],
+                                                        flight['arrival']['gate']))
+
+    elif int(number) == 3:
         city_Name = str(cityCode.get())
         city_Name = city_Name.upper()
         Csock.sendall(city_Name.encode('ascii'))
@@ -81,11 +84,11 @@ while True:
             for flight in flight_Data['data']:
                 print("\nFlight code (IATA) : {}\nDeparture Airport : {}, Departure Time : {}, "
                       "Estimated Arrival Time : {}, Terminal : {}, Gate : {}"
-                      .format(flight['flight']['iata'],flight['departure']['airport'],
-                              flight['departure']['actual'],flight['arrival']['estimated'],
-                              flight['arrival']['terminal'],flight['arrival']['gate']))
+                      .format(flight['flight']['iata'], flight['departure']['airport'],
+                              flight['departure']['actual'], flight['arrival']['estimated'],
+                              flight['arrival']['terminal'], flight['arrival']['gate']))
 
-    elif int(number) == '4':
+    elif int(number) == 4:
         flight_Name = str(flightNumber.get())
         Csock.sendall(flight_Name.encode('ascii'))
 
@@ -115,7 +118,7 @@ while True:
                               flight['arrival']['scheduled'], flight['arrival']['estimated'],
                               flight['arrival']['delay']))
 
-    elif int(number) == '5':
+    elif int(number) == 5:
         print(Csock.recv(1024).decode('ascii'))  # Client receives goodbye
         print("\nClient closed\n" + 25 * "=")
         break
