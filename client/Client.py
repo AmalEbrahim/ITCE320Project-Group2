@@ -2,7 +2,6 @@ import json
 import os
 import socket
 import sys
-import _thread
 
 print("\n********************The Client Has Started******************** \n")
 server_address = ("192.168.43.201", 52499)
@@ -72,8 +71,7 @@ while True:
         cityName = input("Enter city code: ").upper()
         Csock.sendall(cityName.encode('ascii'))
         print("All flights coming from {}: ".format(cityName))
-        Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\client\client_{}\city_{}'.format(cityName,
-                                                                                                      cityName)
+        Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\client\client_{}'.format(my_name)
         if not os.path.exists(Directory):
             os.mkdir(Directory)
         file_path = Directory + '/G2.json'
@@ -98,9 +96,8 @@ while True:
         flightNum = input("Enter flight number: ")
         Csock.sendall(flightNum.encode('ascii'))
 
-        print("DETAILS OF FLIGHT {}".format(flightNum))
-        Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\client\client_{}\flight_{}'.format(my_name,
-                                                                                                        flightNum)
+        print("Details of flight {}".format(flightNum))
+        Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\client\client_{}'.format(my_name)
 
         if not os.path.exists(Directory):
             os.mkdir(Directory)
@@ -112,18 +109,17 @@ while True:
 
                 with open(file_path) as file:
                     flight_Data = json.load(file)  # Convert the JSON data into python objects
-            for flight in flight_Data['data']:
-                print("\nFlight code (IATA) : {},    Date : {},\nDeparture Airport : {}, "
-                      "Departure Gate : {}, Departure Terminal : {}, \nArrival Airport : {}, "
-                      "Arrival Gate : {}, Arrival Terminal : {}, Status : {}, Scheduled Departure Time"
-                      " : {}, Scheduled Arrival Time : {}, Estimated Arrival Time : {}, delay : {}"
-                      .format(flight['flight']['iata'], flight['flight_date'],
-                              flight['departure']['airport'], flight['departure']['gate'],
-                              flight['departure']['terminal'], flight['arrival']['airport'],
-                              flight['arrival']['gate'], flight['arrival']['terminal'],
-                              flight['flight_status'], flight['departure']['scheduled'],
-                              flight['arrival']['scheduled'], flight['arrival']['estimated'],
-                              flight['arrival']['delay']))
+                for flight in flight_Data['data']:
+                    print("\nFlight code (IATA) : {},    Date : {},\nDeparture Airport : {}, "
+                          "Departure Gate : {}, Departure Terminal : {}, \nArrival Airport : {}, "
+                          "Arrival Gate : {}, Arrival Terminal : {}, Status : {}, Scheduled Departure Time: {}, "
+                          "Scheduled Arrival Time : {}, Estimated Arrival Time : {}, delay : {}".format(
+                        flight['flight']['iata'], flight['flight_date'],flight['departure']['airport'],
+                        flight['departure']['gate'], flight['departure']['terminal'],
+                        flight['arrival']['airport'], flight['arrival']['gate'],
+                        flight['arrival']['terminal'], flight['flight_status'],
+                        flight['departure']['scheduled'], flight['arrival']['scheduled'],
+                        flight['arrival']['estimated'], flight['arrival']['delay']))
 
     elif int(number) == 5:
         print(Csock.recv(1024).decode('ascii'))  # Client receives goodbye

@@ -121,11 +121,14 @@ def accept_connection(sock):
             print("\nConnection with client -- {} -- is closed".format(client_name))
             break
 
-
-clients = []
-while True:
-    Ssock_a, sockName = Ssock_p.accept()
-    t = threading.Thread(target=accept_connection(Ssock_a))
-    if len(clients) > 2:
-        break
-    t.start()
+try:
+    clients = []
+    while True:
+        Ssock_a, sockName = Ssock_p.accept()
+        t = threading.Thread(target=accept_connection(Ssock_a))
+        if len(clients) > 2:
+            break
+        t.start()
+except Exception as e:
+    Ssock_p.close()
+    print("connection with a client fail")
