@@ -1,6 +1,8 @@
 import json
 import os
 import socket
+import sys
+import _thread
 
 print("\n********************The Client Has Started******************** \n")
 server_address = ("192.168.43.201", 52499)
@@ -70,7 +72,8 @@ while True:
         cityName = input("Enter city code: ").upper()
         Csock.sendall(cityName.encode('ascii'))
         print("All flights coming from {}: ".format(cityName))
-        Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\client\client_{}\city_{}'.format(cityName, cityName)
+        Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\client\client_{}\city_{}'.format(cityName,
+                                                                                                      cityName)
         if not os.path.exists(Directory):
             os.mkdir(Directory)
         file_path = Directory + '/G2.json'
@@ -96,7 +99,8 @@ while True:
         Csock.sendall(flightNum.encode('ascii'))
 
         print("DETAILS OF FLIGHT {}".format(flightNum))
-        Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\client\client_{}\flight_{}'.format(my_name, flightNum)
+        Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\client\client_{}\flight_{}'.format(my_name,
+                                                                                                        flightNum)
 
         if not os.path.exists(Directory):
             os.mkdir(Directory)
@@ -124,11 +128,10 @@ while True:
     elif int(number) == 5:
         print(Csock.recv(1024).decode('ascii'))  # Client receives goodbye
         print("\nClient closed\n" + 25 * "=")
+        Csock.close()
         break
 
     else:
-        print(Csock.recv(1024).decode('ascii'))  # When client enters a wrong number
+        continue  # When client enters a wrong number
 
-Csock.close()
-option = input("Sending number: ")
-Csock.send(option.encode('ascii'))
+sys.exit()
