@@ -12,7 +12,8 @@ Ssock_p.bind(("192.168.43.201", 52499))
 print("********* Verifying The Connectivity With The Tracker **********")
 params = {'access_key': '9620eb38430e7d2c8eb01a5b90ffb2b0'}
 api_request = requests.get('http://api.aviationstack.com/v1/flights', params)
-api_response = api_request.json()  # .json returns a JSON object of the result
+api_response = api_request.json()  # .json returns a python object of the JSON result
+
 
 # Saving the retrieved information in the server file
 Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\server'
@@ -21,8 +22,9 @@ if not os.path.exists(Directory):
 file_path = Directory + '/G2.json'
 
 file = open(file_path, 'w')
-file.write(json.dumps(api_response, indent=3))
+file.write(json.dumps(api_response, indent=3))  # .dumps converts python object into JSON format
 file.close()
+
 
 print("**************** Ready For Clients' connections ****************")
 Ssock_p.listen(3)  # Waiting for clients' connections
@@ -35,8 +37,9 @@ def accept_connection(sock):
     arr_icao = sock.recv(1025).decode('ascii')
 
     def getFlightsDetails(params):
+        # To retrieve the information from the online source
         api_request = requests.get('http://api.aviationstack.com/v1/flights', params)
-        api_response = api_request.json()
+        api_response = api_request.json()  # .json returns a python object of the JSON result
 
         Directory = r'C:\Users\amool\PycharmProjects\ITCE320_Project\server'
         if not os.path.exists(Directory):
@@ -47,20 +50,21 @@ def accept_connection(sock):
         file.write(json.dumps(api_response, indent=3))  # Saving the retrieved information in a .json file
         file.close()
 
-        return (file_path)
+        return (file_path)  # return the file path where the information saved
 
     while True:
         option = sock.recv(1025).decode('ascii')
         if int(option) == 1:
-            params = {
+            params = { # The parameters that matches the option specifications
                 'access_key': '9620eb38430e7d2c8eb01a5b90ffb2b0',
                 'arr_icao': arr_icao,
                 'flight_status': 'landed'
             }
-
+            # passing the parameters to getFlightsDetails function to retrieve and sava data in the server file
             with open(getFlightsDetails(params), 'rb') as file:
-                toSendFile = file.read()  # Reading the content of the file as a preparation for sending
+                toSendFile = file.read()  # Reading the content of the file as a preparation for sending to the client
                 sock.sendall(toSendFile)
+            # The output in the server terminal that illustrates what has been sent to the client
             print("\nThe requested details about arrived flights:\n"
                   "Flight code (IATA), Departure Airport, Arrival Time, Terminal, Gate\n"
                   "from client -- {} -- sent successfully".format(client_name))
